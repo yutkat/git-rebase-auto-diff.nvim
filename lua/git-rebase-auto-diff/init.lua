@@ -2,17 +2,24 @@ local M = {}
 local config = {
 	size = vim.fn.float2nr(vim.o.lines * 0.5),
 }
+local buf = nil
 
-local terminal = require("toggleterm.terminal").Terminal
-local task_runner = terminal:new({ direction = "horizontal", count = 8 })
+local function terminal_cmd(cmd)
+	vim.cmd(config.size .. "split")
+	local win = vim.api.nvim_get_current_win()
+	buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_win_set_buf(win, buf)
+	vim.api.nvim_set_option_value("previewwindow", true, { scope = "local", win = vim.api.nvim_get_current_win() })
+	vim.fn.termopen(cmd .. "\n")
+end
 
 function M.run(cmd)
-	task_runner:shutdown()
-	task_runner = terminal:new({ cmd = cmd, direction = "horizontal", count = 8 })
-	task_runner:open(config.size, "horizontal", true)
-	require("toggleterm.ui").save_window_size()
+	if buf ~= nil then
+		vim.api.nvim_buf_delete(buf, { force = true })
+	end
+	terminal_cmd(cmd)
+
 	vim.g.toglleterm_win_num = vim.fn.winnr()
-	vim.api.nvim_set_option_value("previewwindow", true, { scope = "local", win = vim.api.nvim_get_current_win() })
 	vim.cmd([[stopinsert | wincmd p]])
 end
 
@@ -30,19 +37,6 @@ end
 local function create_autocmds()
 	local group_name = "git-rebase-auto-diff"
 	vim.api.nvim_create_augroup(group_name, { clear = true })
-	vim.api.nvim_create_autocmd({ "TermClose" }, {
-		group = group_name,
-		pattern = "term://*#toggleterm#8*",
-		callback = function()
-			if vim.fn.winbufnr(vim.g.toglleterm_win_num) ~= -1 then
-				vim.cmd(vim.g.toglleterm_win_num .. "wincmd w")
-				vim.cmd("0")
-				vim.cmd("wincmd p")
-			end
-		end,
-		once = false,
-		nested = false,
-	})
 	vim.api.nvim_create_autocmd({ "CursorMoved" }, {
 		group = group_name,
 		pattern = ".git/rebase-merge/git-rebase-todo",

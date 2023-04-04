@@ -1,6 +1,6 @@
 # git-rebase-auto-diff
 
-Show diff automatically when git rebase, which uses toggleterm to run and display git commands.
+Show diff automatically when git rebase.
 
 https://user-images.githubusercontent.com/8683947/229416568-b50a6391-bd0b-4e61-88d8-2edeabcc1cd2.mp4
 
@@ -9,7 +9,6 @@ Inspired by [hotwatermorning/auto-git-diff](https://github.com/hotwatermorning/a
 ## Installation
 
 ```lua
-{ "akinsho/toggleterm.nvim" }
 {
 	"yutkat/git-rebase-auto-diff.nvim",
 	ft = { "gitrebase" },
@@ -22,7 +21,5 @@ Inspired by [hotwatermorning/auto-git-diff](https://github.com/hotwatermorning/a
 ## Usage
 
 ```
-git rebase -i
+git rebase -i HEAD^^^
 ```
-
-**Note: This plugin occupies terminal 8 of toggleterm**
