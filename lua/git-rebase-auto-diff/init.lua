@@ -13,6 +13,15 @@ local function terminal_cmd(cmd)
 	vim.fn.termopen(cmd .. "\n")
 end
 
+local function is_visual_mode()
+	local CTRL_V = vim.api.nvim_replace_termcodes("<C-v>", true, true, true)
+	local mode = vim.api.nvim_get_mode().mode:sub(1, 1)
+	if mode == "v" or mode == "V" or mode == CTRL_V then
+		return true
+	end
+	return false
+end
+
 function M.run(cmd)
 	if buf ~= nil then
 		vim.api.nvim_buf_delete(buf, { force = true })
@@ -24,6 +33,9 @@ function M.run(cmd)
 end
 
 function M.preview()
+	if is_visual_mode() then
+		return
+	end
 	local function get_git_hash()
 		return vim.fn.matchstr(vim.fn.getline("."), [[^\(\w\+\>\)\=\(\s*\)\zs\x\{4,40\}\>\ze]])
 	end
