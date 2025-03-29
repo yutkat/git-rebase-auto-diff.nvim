@@ -8,13 +8,13 @@ Inspired by [hotwatermorning/auto-git-diff](https://github.com/hotwatermorning/a
 
 ## Installation
 
+using `folke/lazy.nvim`
+
 ```lua
 {
 	"yutkat/git-rebase-auto-diff.nvim",
 	ft = { "gitrebase" },
-	config = function()
-		require("git-rebase-auto-diff").setup()
-	end,
+	opts = {},
 }
 ```
 
