@@ -1,6 +1,7 @@
 local M = {}
 local config = {
 	size = vim.fn.float2nr(vim.o.lines * 0.5),
+	run_show = false,
 }
 local buf = nil
 
@@ -43,7 +44,11 @@ function M.preview()
 	if hash == "" then
 		return
 	end
-	require("git-rebase-auto-diff").run("git --no-pager diff " .. hash .. "^!")
+	local cmd = "git --no-pager diff " .. hash .. "^!"
+	if config.run_show then
+		cmd = "git --no-pager show --stat " .. hash .. " && echo '' && " .. cmd
+	end
+	require("git-rebase-auto-diff").run(cmd)
 end
 
 local function create_autocmds()
@@ -71,7 +76,7 @@ end
 
 function M.setup(opts)
 	opts = opts or {}
-	config = vim.tbl_deep_extend("keep", opts, config)
+	config = vim.tbl_deep_extend("force", config, opts or {})
 	create_autocmds()
 end
 
