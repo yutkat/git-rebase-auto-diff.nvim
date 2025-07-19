@@ -46,7 +46,7 @@ function M.preview()
 	end
 	local cmd = "git --no-pager diff " .. hash .. "^!"
 	if config.run_show then
-		cmd = "git --no-pager show --stat " .. hash .. " && echo '' && " .. cmd
+		cmd = "git --no-pager show --stat --patch " .. hash
 	end
 	require("git-rebase-auto-diff").run(cmd)
 end
