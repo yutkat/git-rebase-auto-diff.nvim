@@ -11,7 +11,10 @@ local function terminal_cmd(cmd)
 	buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_win_set_buf(win, buf)
 	vim.api.nvim_set_option_value("previewwindow", true, { scope = "local", win = vim.api.nvim_get_current_win() })
-	vim.fn.termopen(cmd .. "\n")
+	vim.fn.jobstart(cmd, {
+		term = true,
+		stdout_buffered = false,
+	})
 end
 
 local function is_visual_mode()
@@ -56,7 +59,7 @@ local function create_autocmds()
 	vim.api.nvim_create_augroup(group_name, { clear = true })
 	vim.api.nvim_create_autocmd({ "CursorMoved" }, {
 		group = group_name,
-		pattern = ".git/rebase-merge/git-rebase-todo",
+		pattern = "*/rebase-merge/git-rebase-todo",
 		callback = function()
 			require("git-rebase-auto-diff").preview()
 		end,
@@ -65,7 +68,7 @@ local function create_autocmds()
 	})
 	vim.api.nvim_create_autocmd({ "VimEnter" }, {
 		group = group_name,
-		pattern = ".git/rebase-merge/git-rebase-todo",
+		pattern = "*/rebase-merge/git-rebase-todo",
 		callback = function()
 			require("git-rebase-auto-diff").preview()
 		end,
